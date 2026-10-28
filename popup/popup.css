@@ -340,8 +340,80 @@ header h1 {
 .session-actions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.session-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.01) 0%, transparent 100%);
+  transition: border 150ms ease, transform 150ms ease, background 150ms ease;
+  overflow: hidden;
+}
+
+.session-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.preview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.preview-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  border-radius: 8px;
+}
+
+.preview-favicon {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.preview-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+  flex-shrink: 0;
+  margin-left: 4px;
+  margin-right: 2px;
+}
+
+.preview-title {
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.preview-more {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  padding-left: 6px;
+}
+
+.icon-btn svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 150ms ease;
 }
 
 .icon-btn {

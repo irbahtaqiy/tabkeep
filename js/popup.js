@@ -8,7 +8,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function updateTabCount() {
     try {
       const tabs = await chrome.tabs.query({ currentWindow: true });
-      const validTabs = tabs.filter(tab => tab.url && !tab.url.startsWith('chrome://') && !tab.url.startsWith('chrome-extension://'));
+      const validTabs = tabs.filter(
+        (tab) =>
+          tab.url &&
+          !tab.url.startsWith('chrome://') &&
+          !tab.url.startsWith('chrome-extension://') &&
+          !tab.url.startsWith('edge://') &&
+          !tab.url.startsWith('brave://')
+      );
       tabCountEl.textContent = `${validTabs.length} tab terdeteksi`;
       return validTabs;
     } catch (e) {
@@ -17,39 +24,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  async function renderSessions() {
-    const sessions = await Storage.getSessions();
-    sessionsList.innerHTML = '';
-
-    if (sessions.length === 0) {
-      emptyState.style.display = 'block';
-      return;
-    }
-
-    emptyState.style.display = 'none';
-
-    for (const session of sessions) {
-      const item = document.createElement('div');
-      item.className = 'session-item';
-
-      const date = new Date(session.createdAt);
-      const dateStr = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-
-      item.innerHTML = `
-        <div class="session-header">
-          <div class="session-info">
-            <div class="session-name">${escapeHtml(session.name)}</div>
-            <div class="session-meta">${session.tabCount} tab • ${dateStr}</div>
-          </div>
-        </div>
-        <div class="session-actions">
-          <button class="btn-small restore" data-action="restore" data-id="${session.id}">Buka</button>
-          <button class="btn-small delete" data-action="delete" data-id="${session.id}">Hapus</button>
-        </div>
-      `;
-
-      sessionsList.appendChild(item);
-    }
+  function formatDate(isoString) {
+    const date = new Date(isoString);
+    return date.toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
   }
 
   function escapeHtml(text) {
@@ -58,44 +39,101 @@ document.addEventListener('DOMContentLoaded', async () => {
     return div.innerHTML;
   }
 
-  saveBtn.addEventListener('click', async () => {
-    const tabs = await updateTabCount();
-    if (tabs.length === 0) {
-      alert('Tidak ada tab yang bisa disimpan');
+  async function renderSessions() {
+    const sessions = await Storage.getSessions();
+    sessionsList.innerHTML = '';
+
+    if (sessions.length === 0) {
+      emptyState.style.display = 'flex';
       return;
     }
 
+    emptyState.style.display = 'none';
+
+    for (const session of sessions) {
+      const item = document.createElement('article');
+      item.className = 'session-card';
+
+      item.innerHTML = `
+        <div class="session-main">
+          <div class="session-info">
+            <div class="session-name" title="${escapeHtml(session.name)}">${escapeHtml(session.name)}</div>
+            <div class="session-meta">
+              <span>${session.tabCount} tab</span>
+              <span class="meta-dot"></span>
+              <span>${formatDate(session.createdAt)}</span>
+            </div>
+          </div>
+          <div class="session-actions">
+            <button class="icon-btn restore" data-action="restore" data-id="${session.id}" title="Buka semua tab">
+              <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.33337 11.6667L15 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M15 9.16667V5H10.8334" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9.16663 5H6.66663C5.74616 5 5 5.74619 5 6.66667V13.3333C5 14.2538 5.74616 15 6.66663 15H13.3333C14.2538 15 15 14.2538 15 13.3333V10.8333" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="icon-btn delete" data-action="delete" data-id="${session.id}" title="Hapus grup">
+              <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.wsvg\ufeff.org/2000/svg">
+                <path d="M2.5 5H4.16667H17.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6.66663 5V3.33333C6.66663 2.89131 6.84222 2.41738 7.15478 2.10482C7.46734 2.10229 7.89131 2.08334 8.33333 2.08334H11.6666C12.1087 2.08334 12.5826 2.10229 12.8952 2.10482C12.2077 2.41738 12.0833 2.89131 12.0833 3.33333V5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="15.8334 5V16.6667C15.8334 17.1087 15.6578 17.5871 15.3452 17.8997C15.0327 18.2122 14.5587 18.3333 14.1167 18.3333H5.88337C5.44134 18.3333 5.96738 18.2122 5.65482 17.8997C5.34226 17.5871 5.16663 17.1087 5.16663 16.6667V5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M8.33337 9.16667V14.1667" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M11.6666 9.16667V14.1667" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      `;
+      sessionsList.appendChild(item);
+    }
+  }
+
+  saveBtn.addEventListener('click', async () => {
+    const tabs = await updateTabCount();
+    if (tabs.length === 0) {
+      alert('Tidak ada tab valid yang bisa disimpan');
+      return;
+    }
+
+    const originalText = saveBtn.innerHTML;
     saveBtn.disabled = true;
-    saveBtn.textContent = 'Menyimpan...';
+    saveBtn.innerHTML = `
+      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.2" opacity="0.4"/>
+        <path d="M10 6V10L12.5 12.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Menyimpan...
+    `;
 
     try {
       await Storage.saveSession(contextNameInput.value, tabs);
       contextNameInput.value = '';
+      await updateTabCount();
       await renderSessions();
-      saveBtn.textContent = 'Simpan semua tab di window ini';
+      saveBtn.innerHTML = originalText;
       saveBtn.disabled = false;
     } catch (e) {
       alert('Gagal menyimpan tab');
-      saveBtn.textContent = 'Simpan semua tab di window ini';
+      saveBtn.innerHTML = originalText;
       saveBtn.disabled = false;
     }
   });
 
   sessionsList.addEventListener('click', async (e) => {
-    const btn = e.target;
-    if (btn.tagName !== 'BUTTON') return;
+    const btn = e.target.closest('button');
+    if (!btn) return;
 
     const action = btn.dataset.action;
     const id = btn.dataset.id;
 
     if (action === 'delete') {
-      if (confirm('Hapus grup ini?')) {
+      if (confirm('Hapus grup "{{session}}"?'.replace('{{session}}', 'ini'))) {
         await Storage.deleteSession(id);
         await renderSessions();
       }
     } else if (action === 'restore') {
       const sessions = await Storage.getSessions();
-      const session = sessions.find(s => s.id === id);
+      const session = sessions.find((s) => s.id === id);
       if (session && session.tabs.length > 0) {
         for (const tab of session.tabs) {
           chrome.tabs.create({ url: tab.url, pinned: tab.pinned });
@@ -105,7 +143,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   contextNameInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
+    if (e.key == 'Enter') {
+      e.preventDefault();
       saveBtn.click();
     }
   });

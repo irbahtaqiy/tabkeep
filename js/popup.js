@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2.5 5H4.16667H17.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M6.66663 5V3.33333C6.66663 2.89131 6.84222 2.41738 7.15478 2.10482C7.46734 2.10229 7.89131 2.08334 8.33333 2.08334H11.6666C12.1087 2.08334 12.5826 2.10229 12.8952 2.10482C12.2077 2.41738 12.0833 2.89131 12.0833 3.33333V5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="15.8334 5V16.6667C15.8334 17.1087 15.6578 17.5871 15.3452 17.8997C15.0327 18.2122 14.5587 18.3333 14.1167 18.3333H5.88337C5.44134 18.3333 5.16738 18.2122 5.85482 17.8997C5.54226 17.5871 5.16663 17.1087 5.16663 16.6667V5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M15.8334 5V16.6667C15.8334 17.1087 15.6578 17.5871 15.3452 17.8997C15.0327 18.2122 14.5587 18.3333 14.1167 18.3333H5.88337C5.44134 18.3333 5.16738 18.2122 5.85482 17.8997C5.54226 17.5871 5.16663 17.1087 5.16663 16.6667V5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M8.33337 9.16667V14.1667" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M11.6666 9.16667V14.1667" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
@@ -92,6 +92,65 @@ document.addEventListener('DOMContentLoaded', async () => {
       `;
       sessionsList.appendChild(item);
     }
+  }
+
+  function startInlineEdit(sessionId, currentName) {
+    const card = sessionsList.querySelector(`.session-card[data-id="${sessionId}"]`);
+    if (!card) return;
+    const nameEl = card.querySelector('.session-name');
+    const infoEl = card.querySelector('.session-info');
+    if (!nameEl || !infoEl) return;
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'session-name-input';
+    input.value = currentName;
+    input.maxLength = 40;
+    input.spellcheck = false;
+
+    infoEl.prepend(input);
+    nameEl.style.display = 'none';
+
+    input.focus();
+    input.select();
+
+    async function save() {
+      const newName = input.value;
+      if (newName === null) {
+        cancel();
+        return;
+      }
+      if (newName.trim() === '') {
+        alert('Nama grup nggak boleh kosong');
+        input.focus();
+        input.select();
+        return;
+      }
+      await Storage.updateSessionName(sessionId, newName);
+      await renderSessions();
+    }
+
+    function cancel() {
+      input.remove();
+      nameEl.style.display = 'block';
+    }
+
+    input.addEventListener('keydown', async (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        await save();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        cancel();
+      }
+    });
+
+    input.addEventListener('blur', async () => {
+      setTimeout(async () => {
+        if (document.activeElement === input) return;
+        await save();
+      }, 10);
+    });
   }
 
   saveBtn.addEventListener('click', async () => {
@@ -149,14 +208,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const sessions = await Storage.getSessions();
       const session = sessions.find((s) => s.id === id);
       if (!session) return;
-      const newName = prompt('Edit nama grup:', session.name);
-      if (newName === null) return;
-      if (newName.trim() === '') {
-        alert('Nama grup nggak boleh kosong');
-        return;
-      }
-      await Storage.updateSessionName(id, newName);
-      await renderSessions();
+      startInlineEdit(id, session.name);
     }
   });
 

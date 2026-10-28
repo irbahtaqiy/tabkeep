@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const sessions = await Storage.getSessions();
     sessionsList.innerHTML = '';
 
-    if (sessions.length == 0) {
+    if (sessions.length === 0) {
       emptyState.style.display = 'flex';
       return;
     }
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   saveBtn.addEventListener('click', async () => {
     const tabs = await updateTabCount();
-    if (tabs.length == 0) {
+    if (tabs.length === 0) {
       alert('Tidak ada tab valid yang bisa disimpan');
       return;
     }
@@ -132,22 +132,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     const action = btn.dataset.action;
     const id = btn.dataset.id;
 
-    if (action == 'delete') {
+    if (action === 'delete') {
       if (confirm('Hapus grup ini?')) {
         await Storage.deleteSession(id);
         await renderSessions();
       }
-    } else if (action == 'restore') {
+    } else if (action === 'restore') {
       const sessions = await Storage.getSessions();
-      const session = sessions.find((s) => s.id == id);
+      const session = sessions.find((s) => s.id === id);
       if (session && session.tabs.length > 0) {
         for (const tab of session.tabs) {
           chrome.tabs.create({ url: tab.url, pinned: tab.pinned });
         }
       }
-    } else if (action == 'edit') {
+    } else if (action === 'edit') {
       const sessions = await Storage.getSessions();
-      const session = sessions.find((s) => s.id == id);
+      const session = sessions.find((s) => s.id === id);
       if (!session) return;
       const newName = prompt('Edit nama grup:', session.name);
       if (newName === null) return;
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   contextNameInput.addEventListener('keypress', (e) => {
-    if (e.key == 'Enter') {
+    if (e.key === 'Enter') {
       e.preventDefault();
       saveBtn.click();
     }

@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "tabkeep",
+  "version": "0.0.1",
+  "description": "Simpan kumpulan tab berdasarkan konteks dan restore kapan aja.",
+  "permissions": [
+    "tabs",
+    "storage"
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "tabkeep"
+  }
+}

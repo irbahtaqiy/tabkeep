@@ -22,9 +22,11 @@ Kebanyakan orang nutup tab biar beres, tapi malah lupa link penting yang perlu d
 
 - **Simpan berdasarkan konteks** – Simpan semua tab di window aktif jadi satu grup dengan nama custom
 - **Auto-close tabs** – Setelah disimpan, tab yang kamu simpan langsung ditutup biar browser tetep bersih
+- **Expand preview** – Lihat daftar tab di dalam grup (favicon + judul) tanpa harus restore dulu
+- **Buka di window ini / window baru** – Bisa buka grup di tab baru atau langsung di window terpisah
 - **Restore dengan 1 klik** – Buka semua tab dalam grup persis seperti semula
 - **Edit nama grup** – Ganti nama grup langsung dari popup tanpa keluar modal browser
-- **Kelola grup** – Lihat, edit nama, hapus, atau buka grup yang udah kamu simpan
+- **Kelola grup** – Lihat, edit nama, expand preview, hapus, atau buka grup yang udah kamu simpan
 - **Custom modal konfirmasi** – Konfirmasi hapus grup tetap rapi di dalem popup
 - **Local-first** – Semuanya disimpan di `chrome.storage.local`. Nggak perlu akun, nggak ada data yang dikirim ke server
 - **Ringan & simpel** – Fokus ke `save` & `restore`, tanpa fitur berlebihan

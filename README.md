@@ -24,6 +24,7 @@ Kebanyakan orang nutup tab biar beres, tapi malah lupa link penting yang perlu d
 - **Restore dengan 1 klik** – Buka semua tab dalam grup persis seperti semula
 - **Kelola grup** – Lihat, edit nama, hapus, atau buka grup yang udah kamu simpan
 - **Local-first** – Semuanya disimpan di `chrome.storage.local`. Nggak perlu akun, nggak ada data yang dikirim ke server
+- **Auto-close tabs** – Setelah disimpan, tab yang kamu simpan langsung ditutup biar browser tetep bersih
 - **Ringan & simpel** – Fokus ke `save` & `restore`, tanpa fitur berlebihan
 - **Filter otomatis** – Ngilangin tab `chrome://`, `chrome-extension://`, dll biar tetep bersih
 

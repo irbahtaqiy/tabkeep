@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const sessions = await Storage.getSessions();
     sessionsList.innerHTML = '';
 
-    if (sessions.length === 0) {
+    if (sessions.length == 0) {
       emptyState.style.display = 'flex';
       return;
     }
@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     for (const session of sessions) {
       const item = document.createElement('article');
       item.className = 'session-card';
+      item.dataset.id = session.id;
 
       item.innerHTML = `
         <div class="session-main">
@@ -65,6 +66,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
           </div>
           <div class="session-actions">
+            <button class="icon-btn edit" data-action="edit" data-id="${session.id}" title="Edit nama">
+              <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14.1666 2.5C14.3855 2.28113 14.6453 2.10752 14.9313 1.98906C15.2173 1.87061 15.5237 1.80972 15.8333 1.80972C16.1429 1.80972 16.4493 1.87061 16.7353 1.98906C17.0213 2.10752 17.2811 2.28113 17.5 2.5C17.7189 2.71887 17.8925 2.97871 18.011 3.26468C18.1294 3.55064 18.1903 3.85701 18.1903 4.16667C18.1903 4.47633 18.1294 4.78269 18.011 5.06866C17.8925 5.35463 17.7189 5.60447 17.5 5.83333L6.24996 17.0833L1.66663 18.3333L2.91663 13.75L14.1666 2.5Z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
             <button class="icon-btn restore" data-action="restore" data-id="${session.id}" title="Buka semua tab">
               <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8.33337 11.6667L15 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
@@ -73,10 +79,10 @@ document.addEventListener('DOMContentLoaded', async () => {
               </svg>
             </button>
             <button class="icon-btn delete" data-action="delete" data-id="${session.id}" title="Hapus grup">
-              <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.wsvg\ufeff.org/2000/svg">
+              <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2.5 5H4.16667H17.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M6.66663 5V3.33333C6.66663 2.89131 6.84222 2.41738 7.15478 2.10482C7.46734 2.10229 7.89131 2.08334 8.33333 2.08334H11.6666C12.1087 2.08334 12.5826 2.10229 12.8952 2.10482C12.2077 2.41738 12.0833 2.89131 12.0833 3.33333V5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="15.8334 5V16.6667C15.8334 17.1087 15.6578 17.5871 15.3452 17.8997C15.0327 18.2122 14.5587 18.3333 14.1167 18.3333H5.88337C5.44134 18.3333 5.96738 18.2122 5.65482 17.8997C5.34226 17.5871 5.16663 17.1087 5.16663 16.6667V5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="15.8334 5V16.6667C15.8334 17.1087 15.6578 17.5871 15.3452 17.8997C15.0327 18.2122 14.5587 18.3333 14.1167 18.3333H5.88337C5.44134 18.3333 5.16738 18.2122 5.85482 17.8997C5.54226 17.5871 5.16663 17.1087 5.16663 16.6667V5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M8.33337 9.16667V14.1667" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M11.6666 9.16667V14.1667" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
@@ -90,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   saveBtn.addEventListener('click', async () => {
     const tabs = await updateTabCount();
-    if (tabs.length === 0) {
+    if (tabs.length == 0) {
       alert('Tidak ada tab valid yang bisa disimpan');
       return;
     }
@@ -126,19 +132,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     const action = btn.dataset.action;
     const id = btn.dataset.id;
 
-    if (action === 'delete') {
-      if (confirm('Hapus grup "{{session}}"?'.replace('{{session}}', 'ini'))) {
+    if (action == 'delete') {
+      if (confirm('Hapus grup ini?')) {
         await Storage.deleteSession(id);
         await renderSessions();
       }
-    } else if (action === 'restore') {
+    } else if (action == 'restore') {
       const sessions = await Storage.getSessions();
-      const session = sessions.find((s) => s.id === id);
+      const session = sessions.find((s) => s.id == id);
       if (session && session.tabs.length > 0) {
         for (const tab of session.tabs) {
           chrome.tabs.create({ url: tab.url, pinned: tab.pinned });
         }
       }
+    } else if (action == 'edit') {
+      const sessions = await Storage.getSessions();
+      const session = sessions.find((s) => s.id == id);
+      if (!session) return;
+      const newName = prompt('Edit nama grup:', session.name);
+      if (newName === null) return;
+      if (newName.trim() === '') {
+        alert('Nama grup nggak boleh kosong');
+        return;
+      }
+      await Storage.updateSessionName(id, newName);
+      await renderSessions();
     }
   });
 

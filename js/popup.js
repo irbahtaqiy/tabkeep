@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   function openDeleteModal(name) {
     if (!confirmModal) return false;
     confirmSessionName.textContent = name ? `"${name}"` : 'grup ini';
-    pendingDeleteId = null;
     confirmModal.style.display = 'flex';
     return true;
   }

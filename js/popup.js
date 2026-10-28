@@ -201,10 +201,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const id = btn.dataset.id;
 
     if (action === 'delete') {
-      if (confirm('Hapus grup ini?')) {
+      const card = btn.closest('.session-card');
+      const nameEl = card ? card.querySelector('.session-name') : null;
+      const name = nameEl ? nameEl.textContent : 'grup ini';
+      if (confirm(`Hapus "${name}"?`)) {
         await Storage.deleteSession(id);
         await renderSessions();
       }
+      return;
     } else if (action === 'restore') {
       const sessions = await Storage.getSessions();
       const session = sessions.find((s) => s.id === id);
@@ -213,11 +217,13 @@ document.addEventListener('DOMContentLoaded', async () => {
           chrome.tabs.create({ url: tab.url, pinned: tab.pinned });
         }
       }
+      return;
     } else if (action === 'edit') {
       const sessions = await Storage.getSessions();
       const session = sessions.find((s) => s.id === id);
       if (!session) return;
       startInlineEdit(id, session.name);
+      return;
     }
   });
 

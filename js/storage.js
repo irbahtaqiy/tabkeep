@@ -22,6 +22,17 @@ const Storage = {
     return newSession;
   },
 
+  async updateSessionName(id, newName) {
+    const sessions = await this.getSessions();
+    const idx = sessions.findIndex(s => s.id === id);
+    if (idx === -1) return sessions;
+    const trimmed = newName.trim();
+    if (!trimmed) return sessions;
+    sessions[idx].name = trimmed;
+    await chrome.storage.local.set({ sessions });
+    return sessions;
+  },
+
   async deleteSession(id) {
     const sessions = await this.getSessions();
     const filtered = sessions.filter(s => s.id !== id);

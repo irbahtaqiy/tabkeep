@@ -8,7 +8,7 @@ Browser extension ringan & minimalis buat ngatur tab overload tanpa bikin berant
 
 [![GitHub stars](https://img.shields.io/github/stars/irbahtaqiy/tabkeep?style=flat-square&color=3b82f6)](https://github.com/irbahtaqiy/tabkeep/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/irbahtaqiy/tabkeep?style=flat-square&color=3b82f6)](https://github.com/irbahtaqiy/tabkeep/network/members)
-[![License: MIT](https://img.sh.ég//img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-green?style=flat-square)](https://developer.chrome.com/docs/extensions/mv3/intro/)
 </div>
 
@@ -21,10 +21,12 @@ Kebanyakan orang nutup tab biar beres, tapi malah lupa link penting yang perlu d
 ## 🚀 Fitur
 
 - **Simpan berdasarkan konteks** – Simpan semua tab di window aktif jadi satu grup dengan nama custom
-- **Restore dengan 1 klik** – Buka semua tab dalam grup persis seperti semula
-- **Kelola grup** – Lihat, edit nama, hapus, atau buka grup yang udah kamu simpan
-- **Local-first** – Semuanya disimpan di `chrome.storage.local`. Nggak perlu akun, nggak ada data yang dikirim ke server
 - **Auto-close tabs** – Setelah disimpan, tab yang kamu simpan langsung ditutup biar browser tetep bersih
+- **Restore dengan 1 klik** – Buka semua tab dalam grup persis seperti semula
+- **Edit nama grup** – Ganti nama grup langsung dari popup tanpa keluar modal browser
+- **Kelola grup** – Lihat, edit nama, hapus, atau buka grup yang udah kamu simpan
+- **Custom modal konfirmasi** – Konfirmasi hapus grup tetap rapi di dalem popup
+- **Local-first** – Semuanya disimpan di `chrome.storage.local`. Nggak perlu akun, nggak ada data yang dikirim ke server
 - **Ringan & simpel** – Fokus ke `save` & `restore`, tanpa fitur berlebihan
 - **Filter otomatis** – Ngilangin tab `chrome://`, `chrome-extension://`, dll biar tetep bersih
 
@@ -60,7 +62,7 @@ Karena belum dipublish ke Chrome Web Store, kamu bisa pasang langsung dari sourc
 1. **Buka tab yang pengen disimpan** – Misalnya lagi research buat skripsi dengan 10 tab artikel
 2. **Klik icon tabkeep** – Buka popup extension
 3. **Kasih nama konteks** – Contoh: `Skripsi Bab 2`
-4. **Klik "Simpan semua tab di window ini"** – Semua tab langsung tersimpan jadi satu grup
+4. **Klik "Simpan semua tab di window ini"** – Semua tab langsung tersimpan jadi satu grup, lalu otomatis tertutup
 5. **Tutup tab-tabnya** – Bebaskan ruang biar browser lebih rapi & fokus
 6. **Buka lagi kapan aja** – Tinggal klik `Buka` di grup yang kamu pilih, semua tab kebuka lagi persis semula
 
@@ -68,16 +70,7 @@ Karena belum dipublish ke Chrome Web Store, kamu bisa pasang langsung dari sourc
 
 - [Manifest V3](https://developer.chrome.com/docs/extensions/mv3/intro/) – Standar terbaru Chrome Extension
 - [Vanilla JS](https://developer.mozilla.org/en-US/docs/Web/JavaScript) – Ringan, tanpa framework
-- [Chrome Storage API](https://developer.chrome.com/docs/extensions/reference/storage/) – Penyimp."
-
-## 🗺️ Roadmap
-
-- [ ] Edit nama grup
-- [ ] Buka grup di window baru
-- [ ] Auto-close tab setelah disimpan
-- [ ] Tambahin icon extension
-- [ ] Support Firefox (Manifest V2/V3 adaptasi)
-- [ ] Export/Import sesi
+- [Chrome Storage API](https://developer.chrome.com/docs/extensions/reference/storage/) – Penyimpanan lokal
 
 ## 🤝 Kontribusi
 

@@ -60,6 +60,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     return div.innerHTML;
   }
 
+  function getFavicon(url) {
+    try {
+      const u = new URL(url);
+      return `https://www.google.com/s2/favicons?domain=${u.hostname}&sz=32`;
+    } catch {
+      return '';
+    }
+  }
+
   async function renderSessions() {
     const sessions = await Storage.getSessions();
     sessionsList.innerHTML = '';
@@ -76,6 +85,22 @@ document.addEventListener('DOMContentLoaded', async () => {
       item.className = 'session-card';
       item.dataset.id = session.id;
 
+      const previewItems = (session.tabs || [])
+        .slice(0, 6)
+        .map((tab) => {
+          const fav = getFavicon(tab.url);
+          const title = escapeHtml(tab.title || tab.url);
+          return `
+            <div class="preview-item" title="${title}">
+              ${fav ? `<img class="preview-favicon" src="${fav}" alt="">` : '<span class="preview-dot"></span>'}
+              <span class="preview-title">${title}</span>
+            </div>
+          `;
+        })
+        .join('');
+
+      const moreCount = (session.tabs || []).length > 6 ? (session.tabs || []).length - 6 : 0;
+
       item.innerHTML = `
         <div class="session-main">
           <div class="session-info">
@@ -87,16 +112,28 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
           </div>
           <div class="session-actions">
+            <button class="icon-btn expand" data-action="expand" data-id="${session.id}" title="Lihat isi grup">
+              <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
             <button class="icon-btn edit" data-action="edit" data-id="${session.id}" title="Edit nama">
               <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M14.1666 2.5C14.3855 2.28113 14.6453 2.10752 14.9313 1.98906C15.2173 1.87061 15.5237 1.80972 15.8333 1.80972C16.1429 1.80972 16.4493 1.87061 16.7353 1.98906C17.0213 2.10752 17.2811 2.28113 17.5 2.5C17.7189 2.71887 17.8925 2.97871 18.011 3.26468C18.1294 3.55064 18.1903 3.85701 18.1903 4.16667C18.1903 4.47633 18.1294 4.78269 18.011 5.06866C17.8925 5.35463 17.7189 5.60447 17.5 5.83333L6.24996 17.0833L1.66663 18.3333L2.91663 13.75L14.1666 2.5Z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </button>
-            <button class="icon-btn restore" data-action="restore" data-id="${session.id}" title="Buka semua tab">
+            <button class="icon-btn restore" data-action="restore" data-id="${session.id}" title="Buka di window ini">
               <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8.33337 11.6667L15 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M15 9.16667V5H10.8334" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M9.16663 5H6.66663C5.74616 5 5 5.74619 5 6.66667V13.3333C5 14.2538 5.74616 15 6.66663 15H13.3333C14.2538 15 15 14.2538 15 13.3333V10.8333" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="icon-btn new-window" data-action="newwindow" data-id="${session.id}" title="Buka di window baru">
+              <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.16663 10.8333L15.8333 4.16666" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M15.8333 9.16666V4.16666H10.8333" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9.16663 4.16666H6.66663C5.74616 4.16666 5 4.91285 5 5.83332V14.1667C5 15.0871 5.74616 15.8333 6.66663 15.8333H15.8333C16.8333 15.8333 17.5 15.0871 17.5 14.1667V11.6667" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </button>
             <button class="icon-btn delete" data-action="delete" data-id="${session.id}" title="Hapus grup">
@@ -109,6 +146,12 @@ document.addEventListener('DOMContentLoaded', async () => {
               </svg>
             </button>
           </div>
+        </div>
+        <div class="session-preview" style="display: none;">
+          <div class="preview-list">
+            ${previewItems}
+          </div>
+          ${moreCount > 0 ? `<div class="preview-more">+${moreCount} tab lainnya</div>` : ''}
         </div>
       `;
       sessionsList.appendChild(item);
@@ -288,11 +331,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       }
       return;
+    } else if (action === 'newwindow') {
+      const sessions = await Storage.getSessions();
+      const session = sessions.find((s) => s.id === id);
+      if (session && session.tabs.length > 0) {
+        const urls = session.tabs.map((tab) => tab.url).filter(Boolean);
+        if (urls.length > 0) {
+          chrome.windows.create({ url: urls, focused: true });
+        }
+      }
+      return;
     } else if (action === 'edit') {
       const sessions = await Storage.getSessions();
       const session = sessions.find((s) => s.id === id);
       if (!session) return;
       startInlineEdit(id, session.name);
+      return;
+    } else if (action === 'expand') {
+      const card = btn.closest('.session-card');
+      const preview = card ? card.querySelector('.session-preview') : null;
+      if (!preview) return;
+      if (preview.style.display === 'none' || preview.style.display === '') {
+        preview.style.display = 'flex';
+        btn.setAttribute('title', 'Tutup preview');
+        const svg = btn.querySelector('svg');
+        if (svg) svg.style.transform = 'rotate(90deg)';
+      } else {
+        preview.style.display = 'none';
+        btn.setAttribute('title', 'Lihat isi grup');
+        const svg = btn.querySelector('svg');
+        if (svg) svg.style.transform = 'rotate(0deg)';
+      }
       return;
     }
   });

@@ -302,6 +302,24 @@ header h1 {
   text-overflow: ellipsis;
 }
 
+.session-name-input {
+  width: 100%;
+  min-width: 0;
+  padding: 4px 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-family: inherit;
+}
+
+.session-name-input:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.8);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.12);
+}
+
 .session-meta {
   display: flex;
   align-items: center;

@@ -282,7 +282,8 @@ header h1 {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
+  min-width: 0;
 }
 
 .session-info {
@@ -290,6 +291,7 @@ header h1 {
   flex-direction: column;
   gap: 4px;
   min-width: 0;
+  flex: 1;
 }
 
 .session-name {
@@ -306,6 +308,7 @@ header h1 {
   gap: 6px;
   font-size: 11px;
   color: var(--text-tertiary);
+  flex-wrap: wrap;
 }
 
 .meta-dot {
@@ -313,12 +316,14 @@ header h1 {
   height: 4px;
   border-radius: 50%;
   background: currentColor;
+  flex-shrink: 0;
 }
 
 .session-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
 .icon-btn {

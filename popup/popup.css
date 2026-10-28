@@ -1,0 +1,169 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 320px;
+  min-height: 400px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  background: #0f0f0f;
+  color: #e5e5e5;
+}
+
+.container {
+  padding: 16px;
+}
+
+header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+header h1 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #ffffff;
+}
+
+.subtitle {
+  font-size: 11px;
+  color: #a1a1a1;
+}
+
+.save-section {
+  margin-bottom: 16px;
+}
+
+#contextName {
+  width: 100%;
+  padding: 8px 10px;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  color: #e5e5e5;
+  font-size: 12px;
+  margin-bottom: 8px;
+  font-family: inherit;
+}
+
+#contextName:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.btn {
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn:active {
+  opacity: 0.8;
+}
+
+.primary {
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+.hint {
+  font-size: 10px;
+  color: #737373;
+  margin-top: 6px;
+  text-align: center;
+}
+
+.list-section h2 {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+.sessions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.session-item {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 8px;
+}
+
+.session-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.session-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: #e5e5e5;
+  margin-bottom: 2px;
+  word-break: break-word;
+}
+
+.session-meta {
+  font-size: 10px;
+  color: #737373;
+}
+
+.session-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.btn-small {
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.restore {
+  background: #22c55e;
+  color: #ffffff;
+}
+
+.delete {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.empty-state {
+  text-align: center;
+  font-size: 11px;
+  color: #737373;
+  padding: 20px 0;
+}

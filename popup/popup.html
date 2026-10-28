@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tabkeep</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>tabkeep</h1>
+      <p class="subtitle">Simpan tab berdasarkan konteks</p>
+    </header>
+
+    <section class="save-section">
+      <input type="text" id="contextName" placeholder="Nama konteks (ex: Skripsi Bab 2)" maxlength="40">
+      <button id="saveBtn" class="btn primary">Simpan semua tab di window ini</button>
+      <p class="hint" id="tabCount">0 tab terdeteksi</p>
+    </section>
+
+    <section class="list-section">
+      <h2>Grup tersimpan</h2>
+      <div id="sessionsList" class="sessions-list"></div>
+      <p id="emptyState" class="empty-state" style="display: none;">Belum ada grup tersimpan</p>
+    </section>
+  </div>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/popup.js"></script>
+</body>
+</html>

@@ -224,9 +224,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     `;
 
     try {
-      await Storage.saveSession(contextNameInput.value, tabs);
+      const currentTabs = await chrome.tabs.query({ currentWindow: true });
+      const tabsToSave = currentTabs.filter(
+        (tab) =>
+          tab.url &&
+          !tab.url.startsWith('chrome://') &&
+          !tab.url.startsWith('chrome-extension://') &&
+          !tab.url.startsWith('edge://') &&
+          !tab.url.startsWith('brave://')
+      );
+      await Storage.saveSession(contextNameInput.value, tabsToSave);
       contextNameInput.value = '';
       await updateTabCount();
+
+      const tabIdsToClose = tabsToSave
+        .map((tab) => tab.id)
+        .filter((id) => typeof id === 'number');
+
+      if (tabIdsToClose.length > 0) {
+        try {
+          await chrome.tabs.remove(tabIdsToClose);
+        } catch (err) {
+          // ignore
+        }
+      }
+
       await renderSessions();
     } catch (err) {
       alert('Gagal menyimpan tab');
@@ -234,6 +256,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       isSaving = false;
       saveBtn.disabled = false;
       saveBtn.innerHTML = saveBtnHTML;
+      await updateTabCount();
     }
   });
 

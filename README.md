@@ -32,7 +32,9 @@ Kebanyakan orang nutup tab biar beres, tapi malah lupa link penting yang perlu d
 
 ## 📸 Preview
 
-> *Nanti bisa tambahin screenshot popup tabkeep disini kalo udah ada*
+<p align="center">
+  <img src="assets/preview.png" alt="Preview tabkeep popup" width="340">
+</p>
 
 ## 📦 Cara Install (Load Unpacked)
 

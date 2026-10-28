@@ -5,7 +5,27 @@ document.addEventListener('DOMContentLoaded', async () => {
   const sessionsList = document.getElementById('sessionsList');
   const emptyState = document.getElementById('emptyState');
 
+  const confirmModal = document.getElementById('confirmModal');
+  const confirmSessionName = document.getElementById('confirmSessionName');
+  const modalCancel = document.getElementById('modalCancel');
+  const modalConfirm = document.getElementById('modalConfirm');
+
   let isSaving = false;
+  let pendingDeleteId = null;
+
+  function openDeleteModal(name) {
+    if (!confirmModal) return false;
+    confirmSessionName.textContent = name ? `"${name}"` : 'grup ini';
+    pendingDeleteId = null;
+    confirmModal.style.display = 'flex';
+    return true;
+  }
+
+  function closeDeleteModal() {
+    if (!confirmModal) return;
+    confirmModal.style.display = 'none';
+    pendingDeleteId = null;
+  }
 
   async function updateTabCount() {
     try {
@@ -157,6 +177,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  if (modalCancel) {
+    modalCancel.addEventListener('click', closeDeleteModal);
+  }
+
+  if (modalConfirm) {
+    modalConfirm.addEventListener('click', async () => {
+      if (!pendingDeleteId) {
+        closeDeleteModal();
+        return;
+      }
+      await Storage.deleteSession(pendingDeleteId);
+      closeDeleteModal();
+      await renderSessions();
+    });
+  }
+
+  if (confirmModal) {
+    confirmModal.addEventListener('click', (e) => {
+      if (e.target === confirmModal) {
+        closeDeleteModal();
+      }
+    });
+  }
+
   const saveBtnHTML = saveBtn.innerHTML;
 
   saveBtn.addEventListener('click', async (e) => {
@@ -204,6 +248,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       const card = btn.closest('.session-card');
       const nameEl = card ? card.querySelector('.session-name') : null;
       const name = nameEl ? nameEl.textContent : 'grup ini';
+      pendingDeleteId = id;
+      if (openDeleteModal(name)) {
+        return;
+      }
       if (confirm(`Hapus "${name}"?`)) {
         await Storage.deleteSession(id);
         await renderSessions();

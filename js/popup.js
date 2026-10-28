@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const sessionsList = document.getElementById('sessionsList');
   const emptyState = document.getElementById('emptyState');
 
+  let isSaving = false;
+
   async function updateTabCount() {
     try {
       const tabs = await chrome.tabs.query({ currentWindow: true });
@@ -101,6 +103,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const infoEl = card.querySelector('.session-info');
     if (!nameEl || !infoEl) return;
 
+    if (infoEl.querySelector('.session-name-input')) return;
+
     const input = document.createElement('input');
     input.type = 'text';
     input.className = 'session-name-input';
@@ -116,23 +120,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function save() {
       const newName = input.value;
-      if (newName === null) {
-        cancel();
-        return;
-      }
       if (newName.trim() === '') {
         alert('Nama grup nggak boleh kosong');
         input.focus();
         input.select();
         return;
       }
+      input.disabled = true;
       await Storage.updateSessionName(sessionId, newName);
       await renderSessions();
     }
 
     function cancel() {
-      input.remove();
-      nameEl.style.display = 'block';
+      if (infoEl.contains(input)) {
+        input.remove();
+      }
+      if (nameEl) nameEl.style.display = 'block';
     }
 
     input.addEventListener('keydown', async (e) => {
@@ -148,19 +151,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     input.addEventListener('blur', async () => {
       setTimeout(async () => {
         if (document.activeElement === input) return;
+        if (!input.isConnected) return;
         await save();
-      }, 10);
+      }, 50);
     });
   }
 
-  saveBtn.addEventListener('click', async () => {
+  const saveBtnHTML = saveBtn.innerHTML;
+
+  saveBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    if (isSaving) return;
+
     const tabs = await updateTabCount();
     if (tabs.length === 0) {
       alert('Tidak ada tab valid yang bisa disimpan');
       return;
     }
 
-    const originalText = saveBtn.innerHTML;
+    isSaving = true;
     saveBtn.disabled = true;
     saveBtn.innerHTML = `
       <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -175,12 +184,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       contextNameInput.value = '';
       await updateTabCount();
       await renderSessions();
-      saveBtn.innerHTML = originalText;
-      saveBtn.disabled = false;
-    } catch (e) {
+    } catch (err) {
       alert('Gagal menyimpan tab');
-      saveBtn.innerHTML = originalText;
+    } finally {
+      isSaving = false;
       saveBtn.disabled = false;
+      saveBtn.innerHTML = saveBtnHTML;
     }
   });
 
@@ -215,7 +224,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   contextNameInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      saveBtn.click();
+      if (!isSaving) {
+        saveBtn.click();
+      }
     }
   });
 
